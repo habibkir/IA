@@ -1,0 +1,24 @@
+impurity
+ - alta se il database è bilanciato
+   con bilanciato si intende che contiene metà positivi metà negativi
+   o se ci sono dieci classi se tutte compaiono il 10% delle volte
+   se è molto entropico
+ - bassa se il database è sbilanciato
+   sbilanciato se questo è più concentrato di quello
+
+un nodo è puro se contiene solo nodi della stessa classe
+se è diventato una foglia dell'albero
+
+l'algoritmo è ricorsivo
+a ogni passo riceve un dataset
+alla radice tutto il dataset
+per ogni nodo il sottinsieme del genitore dato al nodo
+a ogni nodo non radice il "sotto dataset"
+
+#+begin_quote
+Non è che me l'hai negata perchè sono nero?
+
+ -- Frasconi de Coglioni
+#+end_quote
+
+

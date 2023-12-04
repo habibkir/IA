@@ -1,0 +1,66 @@
+* Voglio
+un grafo triangolato con dei cluster il più piccoli possibile
+
+tra tutte le triangolazioni ve n'è una ottima che minimizza ... dei cluster
+trovare questa triangolazione è np completo
+
+anche quando arrivo a dei cluster piccoli ... è comunque difficile
+
+ci interessa ... abbastanza fattibile ma senza garanzie di ottimalità per ...
+
+** COMMENT Francesco dixit
+hai un problema rappresentato come un grafo
+creare il grafo duale, rappresentazione alternativa del problema
+
+poi abbiamo fatto tipo su questo grafo un modo di trasformarlo in un grafo triangolato, che ci da la possibilità di creare il minimum spanning tree
+praticamente si fa questo mst e si può applicare un algoritmo di tree solver che ci da garanzia di terminazione e/o trovare il percorso ottimo non ricordo
+e boh
+
+** Variable elimination
+si dice che è simpliciale se \(\mathcal{N}(v) \cup \{v\}\) induce un sottografo completo (una clique) (dove \(\mathcal{N}(v)\) indica i /vicini/ di \(v\))
+(detta una merda, il nodo e i suoi vicini fanno una clique)
+
+*** Teorema (non dimostrato)
+un grafo \(G\) è triangolato sse \(G\) possiede almeno due vertici simpliciali
+
+se ho un grafo triangolato posso trovare i vertici simpliciali e toglierli, in modo da creare delle clique massimali
+
+si aggiunge roba al grafo e si toglie roba al grafo
+#+begin_quote
+the algorithm giveth and the algorithm taketh away
+#+end_quote
+
+qualora il grafo non fosse triangolato bisognerebbe aggiungere gli archi per renderlo triangolato
+*** Ecce pseudocodice
+#+begin_src python
+  def junction_tree_clusters(csp:CSP):
+      x = order_nodes(csp)
+      # choose an ordering x1, x2, ..., xn
+      # trovare l'ordine migliore è NP-completo
+      # onestamente non so come cazzo definire
+
+      E = ConstraintNetwork()
+      for i in range(n, 1, -1):
+          E.add_all([(i,k) for (i,j) in E, (k,j) in E, j in V])
+          # che cazzo di comprehension dovrei fare qui?
+
+      clique_graph = max_cliques_after_elimination(csp)
+      t = len(clique_graph)
+      # vertices = boh,l'affare di prima coi simpliciali
+
+      # create junction tree
+      spanning_diocane = max_spanning_gree(clique_graph)
+      # add constraints
+      spanning_diocane.solve_minicsp(range(1,t), enumerate_solutions=True)
+      # se avete scelto un ordine balordo potreste trovare delle cliquone
+      # che ti finiscono in culo appena provi a risolverle
+#+end_src
+
+se non junction tree, se non vale la running intersection, sticazzi
+se non c'è la running intersection poi non è garantito che non ci siano merge conflict alla fine, se non c'è niente a propagare uguaglianze in tutto il grafo, allora ci sta che questi valori non siano uguali in tutto il grafo, perchè non erano costretti
+
+*** COMMENT Cazzo voleva dire triangolato
+ - ogni ciclo di lunghezza \(\geq 4\) ha un'arco non in quel ciclo che collega due nodi di questo (una /chord/)
+ - \(\forall\) 4 nodi che fanno un ciclo, c'è un arco tra due di questi che non sia un arco del ciclo
+ - per ogni rettangolo c'è un triangolo
+ - per ogni (n>4)angolo ci sono triangoli

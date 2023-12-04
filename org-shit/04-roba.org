@@ -1,0 +1,40 @@
+#    -*- mode: org -*-
+
+
+Archived entries from file /home/big/uni/ia/04-diocane.org
+
+
+* Ecce pseudocodice
+:PROPERTIES:
+:ARCHIVE_TIME: 2023-10-11 Wed 16:25
+:ARCHIVE_FILE: ~/uni/ia/04-diocane.org
+:ARCHIVE_OLPATH: Voglio/Variable elimination
+:ARCHIVE_CATEGORY: 04-diocane
+:END:
+#+begin_src python
+  def junction_tree_clusters(csp:CSP):
+      x = order_nodes(csp)
+      # choose an ordering x1, x2, ..., xn
+      # trovare l'ordine migliore è NP-completo
+      # onestamente non so come cazzo definire
+
+      E = ConstraintNetwork()
+      for i in range(n, 1, -1):
+          E.add_all([(i,k) for (i,j) in E, (k,j) in E, j in V])
+          # che cazzo di comprehension dovrei fare qui?
+
+      clique_graph = max_cliques_after_elimination(csp)
+      t = len(clique_graph)
+      # vertices = boh,l'affare di prima coi simpliciali
+
+      # create junction tree
+      spanning_diocane = max_spanning_gree(clique_graph)
+      # add constraints
+      spanning_diocane.solve_minicsp(range(1,t), enumerate_solutions=True)
+      # se avete scelto un ordine balordo potreste trovare delle cliquone
+      # che ti finiscono in culo appena provi a risolverle
+#+end_src
+
+se non junction tree, se non vale la running intersection, sticazzi
+se non c'è la running intersection poi non è garantito che non ci siano merge conflict alla fine, se non c'è niente a propagare uguaglianze in tutto il grafo, allora ci sta che questi valori non siano uguali in tutto il grafo, perchè non erano costretti
+

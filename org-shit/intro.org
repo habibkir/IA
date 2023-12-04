@@ -1,0 +1,104 @@
+* Esempi
+passiamo alla parte dove non sta parlando di chatgpt
+
+ok sta parlando anche di stable diffusion
+e midjouney
+diocane
+** Esempi non del cazzo
+traduzioni automatiche
+i sottotitoli auto genrati
+
+** Applicazioni di nicchia
+medicina
+
+biochimica
+ - piegamenti di proteine
+ - progettazione di farmaci
+
+molti settori della conoscenza umana usano anche applicazioni di AI   
+
+* Problemi
+anche di etica e politica
+come il riconoscimento facciale che pensa che tutti i neri siano uguali
+
+il merdone di copyright che hanno fatto con copilot
+
+** Utilizzi poco etici
+bombardare gente
+riconoscere gente
+
+quei cazzo di 6 mesi
+QUEI CAZZO DI 6 MESI
+
+* Prospettivi di carriera
+un report con un nome di boh di analitica sui mercati
+
+si usa un fottio di hardware e potenza di calcolo di cristo
+
+
+* Domande fatte
+** Quando hanno smesso di funzionare algoritmi normali?
+questo insegnamento richiede algoritmi per un motivo, si userà anche quello all'inizio
+
+ci sono due branche grosse dell'ai, c'è la cosiddetta Good Old Fashioned Ai, o GOFAI
+ - nota anche come AI simbolica
+ - nota anche come l'era dimenticata in cui la gente cagava lisp
+ - nota anche come la parte che non caga nessuno
+ - nota anche come 80% di questo corso
+
+poi l'ai è vecchia più o meno quanto l'informatica, si ricordi che il concetto di test di turing l'ha introdotto, per l'appunto, turing
+
+** Como pijar lo datos
+quella può essere una parte molto costosa di solito
+per tecniche di allenamento supervisionato ti serve classificarle manualmente
+visto che classificarle manualmente è un dito in culo si fa anche apprendimento autosupervisionato
+
+
+* Corso ed esame
+** Contenuto del corso
+il corso andrà in maniera trasversale su molti argomenti dell'ai
+
+*** Gofai
+si inizierà con roba di GOFAI, iniziando con problemi di ricerca
+tra i probelmi di ricerca ci sono problemi di soddisfacimento di vincoli, come ad esempio
+ - sudoku
+ - n regine
+ - soddisfacibilità boolena (SAT, quel figlio di puttana)
+ - disporre componenti in un circuito integrato
+
+questi problemi visti in maniera circa simbolica
+
+*** Logica computazionale
+rischiate che se non la studiate qui rischiate di non studiarla mai più
+
+tipo, chatgpt non fa una sega di logica, se gli chiedi logica va a puttane
+
+*** Ai più moderna
+quella non simbolica, basata su dati, quindi modelli probabilistici e tecniche di apprendimento
+al momento apprendimento supervisionato, apprendimento non supervisionato non troppo
+
+qualche ora, poco più o meno, sui neural network
+comunque tenere gli argomenti nei limiti di poterci fare un esame
+
+** Modalità di esame
+Si può usare chatGPT, a vostro rischio e pericolo.
+Esame orale, l'idea è che durante l'esame bisogna dimostrare di avere padronanza dell'argomento
+
+Si assegna inoltre un esercizio da fare a casa, che viene concordato a priori, vedete cosa vorreste approfondire nel corso, e cazzi vostri, fatelo funzionare
+Da tradurre in codice funzionante
+
+Il linguaggio lo sciegliete voi, se qualcuno vuole fargli l'esercizio in fortran datemi il numero di telefono, voglio sposarvi
+
+L'esercizio va mandato due giorni prima dell'orale, e all'orale dovete anche difendere quanto consegnato
+
+** Pagina del corso
+ci trovate il calendario con ogni lezione svolta, con gli argomenti
+il libro di testo è l'AITA (artificial intelligence, a modern approach), quarta edizione, è gigante ma se ne fa una piccola parte
+
+a volte ci sono anche cose in più, reperibili online, e i link a volte dati sul sito, altrimenti chiedi a google
+
+** Ricevimento
+gli orari di ricevimento sono sulla pagina del corso
+non se li ricorda
+
+si consiglia di venire al ricevimento visto che di persona si fa in 3 minuti quello che si fa in 5 mail

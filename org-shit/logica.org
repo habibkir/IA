@@ -1,0 +1,177 @@
+* Formula
+\[ x + y = 4 \]
+una formula è caratterizzata da
+ - una sintassi :: che distingue una formula corretta/be formata (es \((x + y = 4)\)) da una sbagliata (es \((4 y += x)\))
+ - una semantica :: è qualcosa che da un significato alle formule
+
+** Funzione interpretazione
+un intepretazione è una mappa dai simboli a qualcosa che esiste nel mondo, ad esempio ai numeri
+un'interpretazione per la formula \(x + y = 4\) potrebbe essere
+ - \(x = 2\)
+ - \(y = 3\)
+
+sotto questa interpretazione la formula è falsa
+
+la formula \(x + y = 4\) non è vera o falsa per se, ma può essere vera o falsa sotto certe interpretazioni
+la semantica decide se una formula è vera o falsa 
+
+* Fiosocazzus
+** Ontologica
+#+begin_quote
+L'essere è e non può non essere
+
+-- Parmenide Regginide DOP
+#+end_quote
+
+decodere cosa cazzo c'è nel mondo è 
+
+
+** Epistemologia
+l'epistemologia è su cosa è possibile sapere o meno
+l'epistemologia nella logica dice che possimamo sapere se una formula è vera o falsa, solo verità o falistà di formule, è un'epistemologia abbastanza limitata
+
+esistono epistemologie più ampie, tipo quella della logica fuzzy, che noi non faremo, noi poi faremo epistemologie con probaiblità
+(la probabilità è un abbastanza diversa dal grado di appartenenza della logica fuzzy, alice è alta con grado 0.9 è diverso da alice è alta con probabilità 0.9)
+
+** Quindi
+ - ontologia :: cosa c'è nel mondo
+ - epistemologia :: cosa può conoscere l'agente
+
+* Tipi di logica
+** Logica proposizionale
+*** Ontologia
+nel mondo ci sono soltanto fatti
+un fatto potrebbe essere
+ - "vienna è la capitale dell'austira"
+ - "il mio agente ha osservato una certa percezione in un certo momento del suo operare"
+ - \(P \land Q \Rightarrow R\) 
+
+*** Operatori
+ - congiunzione :: \(A \land B\) oppure \(A \cdot B\) 
+ - disgiunzione :: \(A \lor B\) oppure \(A + B\) 
+ - negazione :: \(\neg A\) oppure \(\overline{A}\) 
+ - implicazione :: \(A \Rightarrow B\), che equivale a \(\neg B \lor A\)
+
+#+caption: sticazzi implicazione
+| A | B |   | \(A \Rightarrow B) |
+|---+---+---+--------------------|
+| F | F |   | T                  |
+| F | T |   | T                  |
+| T | F |   | F                  |
+| T | T |   | T                  |
+|---+---+---+--------------------|
+
+** Logica del prim'ordine (o dei predicati)
+l'epistemologia non cambia, posso sapre solo vero falso, ma cambia l'ontologia
+*** Ontologia
+hai presente l'sql, 90% è quello
+
+io nel mio mondo ho oggetti, =Marco=, =Luca=, =Alice=...
+e relazioni
+
+posso avere relazioni unarie
+ - =maschio(x)=
+ - =femmina(x)=
+
+relazioni binarie
+ - =fratello(x,y)=
+ - =sorella(x,y)=
+ - =vicino_di_casa(x,y)=
+ - =collega(x,y)=
+
+posso avere funzioni
+ - ~padre(x) => y~
+ - ~madre(x) => y~
+ - ~afferente(x) => y~
+
+appena mettiamo le funzioni il mondi diventa infinito, infatti abbiamo cose quali
+ - \(puttana\) 
+ - \(mamma(puttana)\)[fn::si sa, c'ha la mamma puttana]
+ - \(mamma(mamma(puttana)))\) 
+ - \(mamma(mamma(mamma(puttana))))\) 
+ - \(mamma(mamma(mamma(mamma(puttana)))))\) 
+ - \(mamma(mamma(mamma(mamma(mamma(puttana))))))\) 
+ - \(mamma(mamma(mamma(mamma(mamma(mamma(puttana)))))))\) 
+ - \(mamma(mamma(mamma(mamma(mamma(mamma(mamma(puttana))))))))\) 
+ - \(mamma(mamma(mamma(mamma(mamma(mamma(mamma(mamma(puttana)))))))))\)
+ - e così via[fn::si faceva prima con gli assimi di peano ma sticazzi, più divertente]
+
+*** Formula
+per scrivere tutti gli uomini sono mortali[fn::ottimismo] possiamo scrivere
+\[ \forall x\ Man(x) \Rightarrow Mortal(x) \]
+
+non esiste la roba sbagliata, esistono le formule false, o le formule mal formate
+
+* Wumpus
+[[~/Pictures/Screenshots/clippato.png]]
+** A parole
+c'è un wumpus
+le celle vicino al wumpus (distanza di manhattan pari a 1) puzzano
+
+** In logica proposizionale
+per ogni possibile cella di wumpus
+ - \( wumpus_in_{i,j} \Rightarrow puzza_{i+1,j}\)
+ - \( wumpus_in_{i,j} \Rightarrow puzza_{i-1,j}\)
+ - \( wumpus_in_{i,j} \Rightarrow puzza_{i,j+1}\)
+ - \( wumpus_in_{i,j} \Rightarrow puzza_{i,j-1}\)
+
+quindi, quattro cazzo di formule, per ogni possibile cella, cazzo
+
+** In logica del prim'ordine
+\begin{align*}
+\forall i,j\ Wumpus(i,j) \Rightarrow &Puzza(i+1, j) \land Puzza(1, j+1) \land \\
+&Puzza(i-1, j) \land Puzza(i, j-1)
+\end{align*}
+
+come potete vedere è più espressiva
+
+a volte finisce con l'essere mezza indecidibile o andare a puttane o causare puttane, ma dai, cose che capitano
+
+* Knowledge base
+abemus collezione di formule
+
+è una struttura dinamica, possiamo aggiugere formule, ma non toglierle, abbiamo due operazioni
+ - ~tell(roba)~ :: aggiunge una formula alla knowledge base
+ - ~ask(roba)~ :: ritorna se ~roba~ è presente nella knowledge base o implicate dalla knowledge base
+
+tipo una base dati, ma non posso togliere roba
+
+alcune formule possono anche essere date all'inizializzazione
+le formule sono implicitamente congiunte, stanno in and tra di loro
+
+ask agisce sulla relazione bianria "\(\beta\) =è conseguenza logica di= \(\alpha\)", nota in /anglaise/ come \(\alpha \text{ entails } \beta\), simbolo \(\alpha \models \beta\)[fn::se proprio volessi tradurlo con un verbo sarebbe tipo \(\alpha\) "dimostra" \(\beta\), o "rende necessario", al massimo "è causa logica di", "è condizione sufficiente per"]
+
+** Entailment[fn::credevo fosse =entainment=, ho cercato come si faceva in \(\LaTeX\), e mi sono uscite dominatrix, grazie mille pronuncia del Frasconi, diocane]
+una formula è tanto più forte quanti meno sono i mondi in cui è valida
+una formula valida ovunque si chiama tautologia, vale a dire "formula stronza che non mi dice un cazzo"
+
+una formula \(\alpha\) /entails/ un'altra formula \(\beta\) se in tutti i mondi in cui vale \(\alpha\) vale anche \(\beta\), se \(Mondi\ in\ cui(\alpha) \subseteq Mondi\ in\ cui(\beta)\) 
+
+*** In logica proposizionale
+se abbiamo \(n\) simboli proposizionali, abbiamo \(2^{n}\) possibili mondi, sticazzi si enumerano tutti, sono finiti
+
+ - posso farlo iterando tutte le \(2^{n}\) permutazioni di simboli (naive)
+ - posso farlo in maniera più /smart/ andando ad albero, in quanto posso tagliare corto con certi assegnamenti parziali
+
+però almeno dai, è decidibile, esiste l'algoritmo
+
+*** in logica del prim'ordine
+se \(\alpha \models \beta\) c'è un algoritmo che lo capisce in tempo finito
+ma se \(\alpha \not \models \beta\), allora non esiste un algoritmo che ti dice no
+
+entailment è semidecidibile, è decidibile in un senso ma non nell'altro, l'espressibilità si paga
+
+* Logica di ordini superiori[fn::but this has to go EVEN FURTHER BEYOND]
+prendi tipo l'induzione matematica, questa dice che
+\(\forall \text{ proprietà }\ p\text{ si ha che } (p(0) \land (p(n) \Rightarrow p(n+1)\forall n)) \Rightarrow p(n) \forall n \in \mathbb{N}\) 
+
+questa quantifica su tutte le proprietà, quindi si va oltre la logica del prim'ordine, si va alla logica del SECONDO ORDINE
+
+bellissima, è indecidibile
+
+
+
+
+
+
+

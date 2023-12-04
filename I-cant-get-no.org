@@ -1,0 +1,254 @@
+#+title: I can't get no
+#+author: deez nuts
+#+date: 99:99:99
+* Satisfaction
+ - valida :: vera in tutti i mondi
+ - soddisfacibile :: vera in alcuni mondi
+ - insoddisfacibile :: falsa in tutti i mondi
+
+due formule \(\alpha\) e \(\beta\) sono /logicamente equivalenti/ se \(\alpha \text{ vera } \iff \beta \text{ vera }\), oppure \(models(\alpha) \equiv models(\beta)\) 
+
+** Risultatini
+*** \(\alpha \text{ valida } \iff \neg \alpha \text{ insoddisfacibile }\) 
+(codeste sono meta formule, formule sulle formule)
+
+*** \({(\alpha \models \beta)} \iff {(\alpha \Rightarrow \beta) \text{ valida }}\)
+i mondi in cui \(\beta\) sono un sovrainsieme dei mondi in cui \(\alpha\), quindi ogni volta che \(\alpha\) allora \(\beta\), quindi in \(\alpha \Rightarrow \beta\) o sono vero vero, o sono falso falso.
+
+inoltre \(\alpha \Rightarrow \beta\) non è valida solo quando ci sono casi in cui \(\alpha \land {\neg \beta}\), che sono gli stessi casi in cui non vale l'entainment
+
+il fatto che \(\alpha \Rightarrow \beta\) sia vero vuol dire che \(\alpha \land {\neg \beta}\) è insoddisfacibile, dimostrare che \(\alpha \models \beta\) partendo dal dimostrare che \(\alpha \land {\neg \beta}\) è impossibile è lo stesso meccanismo delle dimostrazioni per assurdo
+
+* Algoritmi per entainment
+ 1. Model Checking (DPLL)
+ 2. Theorem Proving (Reduction)
+
+hanno cose in comune
+ - entrambi lavorano su \({\alpha \models \beta} \iff {{\alpha \land {\neg \beta}} \text{ insoddisfacibile}}\)
+ - entrambe lavorano sulla =CNF= (conjunctive normal form), che è una grossa congiunzione di tante disgiunzioni[fn::vale a dire un grosso ~and~ di tanti piccoli ~or~]
+   le disgiunzioni in questione si chiamano clausole, sono disgiunzioni di letterali, un letterale è un simbolo prosizione, oppure un simbolo proposizionale negato
+
+ #+begin_src cpp
+   // ho scritto questo codice per noia
+   // non so se compila o meno
+
+   struct Literal {
+       Symbol symbol;
+       bool negated;
+   };
+
+   class Assignment {
+   private:
+       std::map<Symbol, bool> mappings = std::map<Symbol, bool>;
+
+   public:
+       Assignment(){}
+       Assignment(std::map<Symbol, bool> mappings):mappings(mappings){}
+       void add_symbol(Symbol sym, bool b) {
+           map[sym] = b;
+       }
+       void remove_symbol(Symbol sym) {
+           // boh, sticazzi
+       }
+       bool value_of(Symbol sym) {
+           return mappings[sym];
+       }
+   }
+
+   // assignment rappresentato con una
+   // std::map<Symbol, bool>;
+
+   class DisjunctiveClause {
+   private:
+       std::vector<Literal>& literals;
+   public:
+       DisjunctiveClause(std::vector<Literal>& literals):literals(literals) {}
+
+       // le clausole sono disgiunzioni, quindi ritorna true se anche solo una è vera
+       bool is_valid_assignment(std::map<Symbol, bool> ass) {
+           for(Literal l: literals) {
+               if((!l.negated && ass[l.symbol])) ||
+                   (l.negated && !ass[l.symbol])
+                   return true;
+           }
+           return false;
+       }
+   };
+
+   class CNF {
+   private:
+       std::vector<DisjunctiveClause>& clauses;
+   public:
+
+       CNF(std::vector<DisjunctiveClause>& clauses):clauses(clauses){}
+
+       // è una congiunzione di clausole, quindi devono essere tutte vere
+       bool is_valid_assignment(std::map<Symbol, bool> ass) {
+           for(DisjunctiveClause clause: clauses) {
+               if(!clause.is_valid_assignment(ass))
+                   return false;
+           }
+           return true;
+       }
+   };
+
+ #+end_src   
+
+** DPLL
+è tipo backtracking ma con euristiche legate a sat
+#+begin_src python
+  def DPLL(clauses, syms, interpretation):
+      """
+      nei casi di logica proposizionale
+      c'era l'algoritmo bovino per l'entainment,
+      quello di enumerare tutti i mondi e controllarli tutti
+
+      si era detto che era più \"smart\" usare un albero per farlo visto
+      che se si usa un albero possiamo fare pruning,
+      vale a dire fanculare un assegmanento parziale prima di continuarlo
+
+      che è il motivo per cui si usano le cnf, con le cnf possiamo mandare subito a fare
+      in culo un assegnemto parziale, visto che tutte le clausole devono essere vere
+      """
+
+      if all_true([interpretation.check(clause) for clause in clauses]):
+          return True
+      if any_true([interpretation.check(clause) for clause in clauses]):
+          return False
+
+      # mo vamo di eruistiche
+      # sono documentate sotto
+
+      # simbolo puro
+      p,val = find_pure_symbol(clauses, syms, interpretation)
+      if p is not None:
+          clauses.remove_clauses_containing(p) # aggiunta mia, sticazzi
+          syms.remove(p)
+          interpretation.add_binding(p, val)
+          return DPLL(clauses, syms, interpretation)
+
+      # unit clause
+      p,val = find_unit_clause(sym, clauses, interpretation)
+      if p is not None:
+          syms.remove(p)
+          interpretation.add_binding(p, val)
+          return DPLL(clauses, syms, interpretation)
+
+      # qui abbiamo finito le euristiche, si va brutali di backtracking
+      p, rest = syms.split_first()
+
+      return (DPLL(clauses, rest, interpretation.add(p, True)) or
+              DPLL(clauses, rest, interpretation.add(p, False)))
+
+#+end_src
+
+*** Simbolo puro
+e ora andiamo di euristiche, diciamo che ho
+\[ \{\{A, \neg B\}, \{\neg B, \neg C\}, \{C, A\}\} \]
+
+qui \(B\) compare sempre allo stesso modo, quindi o sempre vero o sempre falso
+
+cosa possiamo dire di questa formula, sapendo che \(B\) è sempre allo stesso modo? In teoria niente, ma dal punto di vista "di programma" posso confermare che qui se metto \(B\) a false, non perdo nulla, se c'è un'interpretazione del =CNF= che lo soddisfa c'è anche un'interpretazione del =CNF= che rende la formula vera
+
+ - se ho un assegnamento con \(B\) falso, ok
+ - se ho un assegnamento con \(B\) vero, potrei metterlo a falso e resterebbe vero, tanto le clausole sono or, non è che ne cambio da falso a vero cazzo me la rende falsa?
+
+inoltre, sapendo che ho fissato a vere quelle clausole dove c'era \(B\) , non mi servono più a un cazzo, posso toglierle
+
+e poi, avendo tolto quelle clausole potrei pure aver creato nuovi simboli puri, /and so on ad infinitum/ (se propaga boyse) 
+
+*** Unit clause
+una unit clause è una clausola che consiste di un solo letterale, se ho una cosa del genere
+\[ \{\{A, \neg B\}, \{\neg B, \neg C\}, \{\neg C\} \{C, A\}\} \]
+
+sticazzi, \(C\) va messo a ~False~
+
+inoltre, visto che poi ho \(\{C, A\}\), e ho già fissato \(C\), ora abbiamo che \(A\) è l'unica variabile rimasta nella clausola, rendendola una nuova unit clause, e quindi /PROPAGAMUS/
+ 
+* CSP to SAT
+prendiamo tot simboli  \(A_{iv}\)che sono
+
+\[ A_{iv} =
+\begin{cases} True &\text{ se } X_i \text{ assegnato a } v \\
+False &\text{ altrimenti }
+\end{cases} \]
+
+dobbiamo fare comunque in modo che
+ - ogni \(X_i\) sia assegnata a uno e un solo \(v\)
+   - a uno :: \(\bigwedge_{i = 1}^n (\bigvee_{i = 1}^{n} A_{iv}\))
+   - uno solo :: \(\bigwedge_{v \in Vals} (\bigwedge_{i = 1}^n \bigwedge_{j = 1, j\neq i}^n (\overline{A_{iv} \land A_{jv}}))\)
+
+poi oltre ai suddetti vincoli si aggiungono anche i vincoli del problema
+
+
+* Sat
+SAT è np completo
+ma molte istanze di SAT sono facili da risolvere
+
+il sudoku è facile, ma ci sono certe istanze del sudoku che sono dei puttanai, quindi il caso generico è il puttanaio, perchè ricopre anche quei pochi bastardi[fn::chiamo da reggio emilia]
+
+* Modelli di generazione di cazzi
+** Uniform Random \(k-\)SAT
+\(k\) sta per il numero di letterali in ciascuna clausola
+
+#+begin_quote
+*NOTA* \(k \geq 3\) comunque, visto che \(2-\)SAT è polinomiale, se ho una clausola con 2 letterali equivale a un'implicazione, quindi faccio la catenina, e se vedo l'implicazione come arco di un grafo allora posso posso fare le componenti fortemente connesse faccio la soddisfaciblità, boh
+#+end_quote
+
+poi abemus
+ - \(n\) :: simboli proposizionali
+ - \(m\) :: clausole
+ - e ogni clausola ha ESATTAMENTE \(k\) letterali
+
+per fare una clausola
+#+begin_src python
+  def crea_clausola(n_simboli, k):
+      # ricordati che i.i.d vuol dire indipendent identically distributed
+#+end_src
+
+se devo scegliere *ESATTAMENTE* \(k\) simboli tra \(n\) ho \(\binom{n}{k}\) modi di sceglierle, visto che ognuno dei simboli posso negarli o meno ho una scelta binaria per ogni simbolo, quindi moltiplico per \(2^{k}\), in totale ci sono \(2^{k}\binom{n}{k}\) possibili scelte
+
+abemus anche /rejection sampling/
+ - si ignorano i duplicati di simboli
+ - si ignorano i duplicati di clausole
+ - si ignorano le tautologie, se compaiono sia \(C\) che \(\neg C\) allora la clausola avrà un \(C \lor {\neg C}\) che grazialcazzo
+
+* Transizione di fasi
+#+begin_quote
+già il nome dice che viene dai fisici
+
+-- Il frasco
+#+end_quote
+
+~PHASE TRANSITION~
+
+** Come quantificare cristo
+pensa a un sistema lineare 
+ - con 8 equazioni e 100 variabili hanno tutti un fottio di soluzioni
+ - con 100 equazioni e 8 variabili ne hai pochissimi che hanno una soluzione
+
+la difficoltà di un problema si quantifica con \(\frac{m}{n} \triangleq r\)
+
+[[/home/big/Pictures/Screenshots/2023-10-23-16-13-33.png]]
+
+* WalkSat
+randomizzato
+#+begin_src python
+  def WalkSat(problem, prob, max_flips):
+      model = random_assignment()
+      for i in range(max_flips):
+          if problem.is_good_model(model):
+              return model
+          clause = pick_random_among(problem.clauses_not_satisfied_by(model))
+          i = rand(0,1)
+          if i < prob:
+              clasue.flip_random_symbol()
+          else:
+              """
+              inverti un simbolo nella clausola che minimizza il numero di clausole non soddisfatte
+              """
+#+end_src
+
+
+
+                

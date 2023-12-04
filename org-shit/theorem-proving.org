@@ -1,0 +1,117 @@
+#+title: Theorem Proving
+#+author: Sellone Ciompi
+#+date: YYYY:MM:DD
+
+#+latex_header: \usepackage[makeroom]{cancel}
+
+* Notazione a cazzo
+si usa la notazione
+\[ \frac{x\ cosa\ che\ sapevo\ da\ prima}{y\ cosa\ che\ so\ visto\ che\ so\ x} \]
+
+quindi possiamo dire, ad esempio
+ - modus ponens :: \(\frac{{\alpha \Rightarrow \beta}, \alpha}{\beta}\)
+ - contrapposition :: \(\frac{\alpha \Rightarrow \beta}{{\neg \beta} \Rightarrow {\neg \alpha}}\)
+ - modus tollens[fn::cugino figo della contrapposition] :: \(\frac{{\alpha \Rightarrow \beta}, {\neg \beta}}{\neg \alpha}\)
+ - And elimination :: \(\frac{\alpha \land \beta}{\alpha}\), oppure \(\frac{\alpha \land \beta}{\beta}\) 
+ - biconditional elimination :: \(\frac{\alpha \iff \beta}{{\beta \Rightarrow \alpha},\ {\alpha \Rightarrow \beta}}\)
+
+* Wumpus
+le regole del gioco si possno scrivere come, boh
+ - \(R_1\) :: \(\neg Pit_{1,1}\) (che altrimenti sarei caduto)
+ - \(R_2\) :: \(Breeze_{1,1} \iff {Pit_{1,2}} \lor {Pit_{2,1}}\) 
+ - \(R_3\) :: \(Breeze_{2,1} \iff {Pit_{2,2}} \lor {Pit_{3,1}}\)
+ - &Co.
+
+poi faccio delle query ai sensori dell'agente, boh
+
+la successione di questi passaggi diventa poi la dimostrazione del passaggio dopo, boh
+
+perchè funziona questa dimostrazione ricavata? Perchè l'ha trovata il prof da prima.
+Come la faccio fare a un computer? Non in modo efficiente.
+
+* And one rule to rule them all
+invece di fare tutto sto lavoro basta una singola regola
+
+ecco l'unica regola che ci serve, la /risoluzione/
+la risoluzione lavora solo su clausole, ma non ci fa paura visto che ogni formula può essere convertita in cnf
+
+ecco il caso più facile possibile
+\[ \frac{{A \land B}, {\neg A}}{B} \]
+
+se ho un insieme \(\Phi\) di letterali, visto che tanto una clausola è equivalente a un insieme di letterali
+
+siano
+ - \(l\) un letterale
+ - \(l \in \Phi\) 
+ - \(\Psi\) un insieme di letterali, con \(l \not \in \Psi\) 
+allora
+\[ \frac{\Phi, \Psi}{(\Phi \backslash \{l\}) \cup (\Psi \backslash \{\neg l\})} \]
+
+la si può pensare come un
+\[ \frac{{A \lor \cancel{B} \lor C}, {{\neg \cancel{B}}, \lor D \lor E}}{{A \lor C} \lor {D \lor E}} \]
+
+* Sound
+regole di inferenza sound
+
+\(\alpha \vdash \beta\) vuol dire che \(\beta\) è derivato con \(\alpha\) da un certo algoritmo
+
+ - con un algoritmo =sound= :: \(\alpha \vdash \beta\) allora \(\alpha \models \beta\)
+ - con un algoritmo =completo= :: \(\alpha \models \beta\) allora \(\alpha \vdash \beta\)
+
+ - soundness vuol dire
+ - completezza vuol dire che posso dimostrare tutte le formule vere[fn::Goedel momento], questa dipende da
+   - il modello su cui sto lavorando
+   - l'algoritmo che sto usando
+
+per trovare che una cnf è insoddisfacibile si può fare vedendo che una delle calusole è logicamente equivalente a false
+una clausola equivalenete a false è la clausola vuota [fn::\(\bigwedge_{i \in \emptyset} i\ =\ true\) e \(\bigvee_{i \in \emptyset} i\ =\ false\), visto che altrimenti non torna]
+
+vale a dire generi clausole dalle clausole presenti, ottenendo nuove clausole che non modificano comunque la semantica del problema
+se a furia di generare clausole del genere si ottiene che si aggiunge una clausola vuota, e se si sa che l'aggiunta di questa non dovrebbe cambiare la semantica del problema, allora il problema è equivalenete al problema \(\land\ false\), vale a dire, è falso[fn::che cazzo ho scritto lo sa solo Dio, e si spera anche il lettore]
+
+comunque questo coso fa vedre i passaggi, dpll non fa vedere i passaggi
+
+** Ground resolution theorem
+ground è una keyword anch'essa abbastanza stronza della logica
+
+ - la logica proposizionale è al piano terra
+ - la logica del prim'ordine è al primo piano
+
+quando siamo in logica del prim'ordine, ground vuol dire che sta nella logica proposizionale, vale a dire è il punto di partenza, credo
+
+*** il teorema
+se \(S\) è un insieme di clausole non soddisfacibile, allora, l'applicazione ripetuta di resolution è garantita trovare la clausola vuota, IN TEMPO FINITO. Credo.
+
+scritta in matematichese ancora più matematichese si dice che
+\[ Closure_{Resolution}(S) \ni \{\} \]
+(la chiusura di \(S\) rispetto a \(Resolution\) contiene la clausola vuota)
+
+*** dimostrazione
+la dimostrazione è un po' curiosa, un po' pedante
+è per contraddizione, si dimostra che se non contenesse l'insieme vuoto allora sarebbe soddisfacibile
+
+la fai sul libro perchè al frasca manca solo un quarto d'ora quindi mi spiace, nada
+
+* Restringere
+si può restringere la logica proposizionale, rendendola un po' meno espressiva, ma si guadagnano "assunzioni extra sui dati" che permettono di fare roba nuova e/o roba in maniera più efficiente
+
+** Definizioni
+ - clausola definita :: una clausola si dice clausola definita se ha al più un letterale positivo
+ - clausola di horn :: una clausola si dice di horn se ha UNO E UN SOLO letterale positivo
+
+a cazzo mi serve?
+ - pensa a de morgan
+ - pensa all'implicazione
+ - pensa a PROLOG
+
+come si riscrive come implicazione qualcosa come \(A \lor {\neg B} \lor {\neg C}\)?, facciamo \(A \lor {\neg (B \land C)}\), e visto che \(x \Rightarrow y\) equivale a \({\neg x} \lor y\)
+
+allora \(A \lor {neg (B \land C)}\) paro paro a \(A \Leftarrow (B \land C)\)
+
+** Chaining
+esistono algoritmi che possono fare reasoning in tempo estremamente rapido, ma solo su clausole di questo tipo, due di questi sono
+ - forward chaining
+ - backward chaining
+
+   
+

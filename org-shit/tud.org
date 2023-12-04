@@ -1,0 +1,62 @@
+* 2023-10-27
+Theorem proving. Inference rules and theorem proving as search. Soundness and completeness. Resolution. Ground resolution theorem. Definite and Horn clauses. Forward and backward chaining.
+
+** Read
+ - RN20 7.5
+
+* 2023-10-30
+Limitations of logic under uncertainty. Probabilities, distributions, beliefs. Patterns of probabilistic reasoning. Updating beliefs from evidence using Bayes' rule. Conditional independence. Introduction to graphical models. 	
+
+** Read
+ - RN20 12.1-12-5
+ - B12 1., 3.1
+
+* 2023-11-01
+No class today
+
+* 2023-11-06
+Markov networks. Compatibility functions. Examples. I-maps and D-maps. Hammersley-Clifford theorem. Limitations of undirected networks. Directed graphical models. Examples.
+
+** Read
+ - RN20 13.2
+ - B12 4.1, 4.2.
+
+* 2023-11-08
+Conditional independence entailment. D-separation and conditional independence in directed networks. Conditional probability tables. Examples. 	
+
+** Read
+ - RN20 13.2 (except 13.2.3)
+ - B12 3.1, 4.2, 4.5, 6.1
+
+* 2023-10-27
+Theorem proving. Inference rules and theorem proving as search. Soundness and completeness. Resolution. Ground resolution theorem. Definite and Horn clauses. Forward and backward chaining.
+
+** Read
+ - RN20 7.5
+
+* 2023-10-30
+Limitations of logic under uncertainty. Probabilities, distributions, beliefs. Patterns of probabilistic reasoning. Updating beliefs from evidence using Bayes' rule. Conditional independence. Introduction to graphical models. 	
+
+** Read
+ - RN20 12.1-12-5
+ - B12 1., 3.1
+
+* 2023-11-01
+No class today
+
+* 2023-11-06
+Markov networks. Compatibility functions. Examples. I-maps and D-maps. Hammersley-Clifford theorem. Limitations of undirected networks. Directed graphical models. Examples.
+
+** Read
+ - RN20 13.2
+ - B12 4.1, 4.2.
+
+* 2023-11-08
+Conditional independence entailment. D-separation and conditional independence in directed networks. Conditional probability tables. Examples. 	
+
+** Read
+ - RN20 13.2 (except 13.2.3)
+ - B12 3.1, 4.2, 4.5, 6.1
+
+ - Optional: B12 23
+ - Optional: B12 23

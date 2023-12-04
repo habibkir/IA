@@ -1,0 +1,86 @@
+* Perceptron
+** Teorema
+(fatto 5 anni dopo l'introduzione del perceptron)
+
+ - dataset non banale
+ - \(R \circ || x ||_{2}\) 
+ - \(\exists \omega^{*},b^{*}\ || w^* ||_2 = 1, \gamma > 0 :\ y (x^Tw^* + b^* ) \geq \gamma\) 
+
+#+begin_quote
+quest'ipotesi è per far contenta la matematica
+
+  -- Frasconi, P.
+#+end_quote   
+
+allora upper bound
+\[ k < {(\frac{2R}{\gamma})}^2 \]
+
+questa \(\gamma\) posso scalarla a piacere, se scalo tutti gli input di 100 allora il luogo dei putni che cerco non cambia, mentre \(\gamma\) aumenta 100 volte
+è per questo che \(\gamma\) qui è in rapporto alla geometria del dataset, in rapporto all'\(R\) della sfera dentro il quale sta tutto
+
+*** Boh
+quando a malapena ci passa in mezzo ci vuole tanto
+se ... e \(\gamma\) non c'è più allora ...
+
+se non sono separabili linearmente e \(\gamma\) ... allora il problema può diventare intrattabile e arrivare al caro vecchio cazzo di /NP-Completo/
+
+*** Dimostrazione
+**** =Weee=
+per togiere l'offset se fa l'artificio di aumentare le dimensioni del vettore
+ - \(\overline{x} = \binom{x}{R) \in \mathbb{R}^{d + 1}\)
+ - \(\overline{w} = \binom{w}{R) \in \mathbb{R}^{d + 1}\)
+
+**** =Update=
+\begin{align*}
+\overline{w}^{(k)} &= \overline{w}^{(k-1)}+y\overline{x} \\
+<\overline{w}^{(k)},\ \overline{w}^*> &= <\overline{w}^{(k-1)}+y\overline{x},\ \overline{w}^*> \\
+ &= <\overline{w}^{(k-1)},\ \overline{w}^*> + <y\overline{x},\ \overline{w}^*>
+\end{align*}
+
+e
+\[ <y\overline{x},\ \overline{w}^*> \geq \gamma \]
+per induzione
+
+inoltre
+
+\[ || \overline{w}^{(k)} ||_{2}^{2} = || \overline{w}^{(k-1)} ||_{2}^{2} + 2y<\overline{w}^{(k-1)}, \overline{x}> + || \overline{x} ||_{2}^{2} \]
+
+e visto che facciamo errori solo quando ... è negativo sappiamo che questo sarà
+\[ \leq  || \overline{w}^{(k-1)} ||_{2}^{2}\ || \overline{x}||_{2}^{2} \leq\ || \overline{w}^{(k-1)} ||_{2}^{2}\ 2R^2\]
+
+e visto che il prodotto scalare è ... del prodotto delle norme (cauchy - shwartz)
+
+\begin{align*}
+k \gamma \leq <\overline{w}^{(k)} , \overline{w}^*> &\leq ||\overline{w}^(k)||_2\ ||\overline{w}^*||_2 \\
+&\leq \sqrt{2k} R\ || \overline{w}^* ||_2
+\end{align*}
+
+avendoci messo l'assunzione che ... debba essere a norma 1 allora abbiamo che
+
+\[ k \leq 2 (\frac{R}{\gamma})^2 || \overline{w}^* ||_{2}^{2} \]
+
+essendo che
+\[ 1 + (\frac{b^*}{R})^2 \to b^* < R \]
+
+essendo \(R\) il raggio del dataset , se i punti sono linermente separabili allora il piano lo supera solo se tutti i punti sono positivi o sono tutti negativi
+abbiamo assunto che non lo fossero
+quindi no
+
+amen
+
+*** come pesare gli iperpiani
+un iperpiano ha una "vita"
+andando avanti di esempi, un iperpiano vive finchè non scazza un'esempio
+si tiene conto di quente iterazioni ha fatto prima di scazzare
+si usa quello come peso
+
+** Duale
+quest'algoritmo può essere riscritto in forma duale
+
+spero vi convinca il fatto che
+se 
+
+[[/home/big/Pictures/Screenshots/grim/2023-11-29-15-32-56.png]]
+
+boh
+

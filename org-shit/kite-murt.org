@@ -1,0 +1,196 @@
+Laplace smoothie
+
+...
+
+e andate a caccia della struttura che ha lo score più grande possibile
+
+questo è un lavoro del 92, c'è l'articolo
+questo nel tutorial di david ackermann è riportato lo stesso, quindi non c'è bisogno di andare a vedere anche questo
+
+* Algoritmi di ricerca
+a questo punto la domanda diventa
+ - si sta cercando la struttra con lo core più grosso
+ - con quale algoritmo si cerca?
+
+abbiamo visto due algoritmo di ricerca
+ - percorso per massimizzare, sequenza di azioni
+ - configurazione per massimizzare, struttura finale
+
+ è chiaro che non si usa un a*, questa è una local search, e qua si può fare di tutto, la cosa più facile da fare qui sarà un hill climbing, magari con un beam search, perchè no, ma LOCAL beam serach
+
+ qua le azioni che posso fare sono
+  - aggiungere un arco
+  - togliere un arco
+  - cambiare direzione a un arco(tanto orientato)
+
+occhio che non tutte queste azioni sono legali
+ad esempio posso introdurre un ciclo
+
+** D Structure/Equivalenze
+occhio inoltre che abbiamo delle classi di equivalenza, se si guardano le triplette di indipendenza condizionale magari non cambia un cazzo
+e se le triplette non cambiano si noterà che gli score delle due strutture non cambieranno
+quindi stesse classi -> stesso score -> stesso (classe di equivalneza)
+
+si vedono i collider, visto che sono quelli che fanno l'indipendenza condizionata, in particolare si va a vedere la d-structure
+
+hanno la stessa d-strucutre perchè hanno gli stessi collider
+
+se faccio una mossa che preserva la d-structure quella mossa non serve a nulla
+
+** Causalità
+questa di structure learning non è in grado di notare la causalità
+in due strutture anche con gli stessi collider, ergo score, può essere che A è la causa di B, o che B è la causa di A, e non cambierebbe un cazzo.
+
+per trovare la causalità bisogna poter fare degli interventi sull'ambiente, non si può osservare passivamente il dataset.
+
+** Programmare
+quando si va a cambiare un arco, visto che le reti sono grosse, e che i cambiamenti sono locali, spesso conviene "moltiplica per questo e dividi per quest'altro"
+perchè è una produttoria e molti dei fattori restano uguali
+
+* Queste indipendenze distribuzioni
+ci sono reti di markov che non posso fare con reti bayesiane, tipo questa
+[[/home/big/Pictures/Screenshots/grim/2023-11-27-15-07-58.png]]
+
+e reti bayesiane che non posso fare con reti di markov, tipo questa
+[[/home/big/Pictures/Screenshots/grim/2023-11-27-15-09-26.png]]
+
+* Categorizzazione per spam
+Bayesian network facile per spam
+
+\(y\) è una categoria, e devo capire quale cazzo sia
+ - \(y \in \{spam, non\ spam\}\) 
+ - \(y \in \{una\ stella,\ due\ stelle,\ tre\ stelle\, \dots\}\) 
+ 
+\(y\) può anche essere detta /classe/ (problema di classificazione del testo)
+
+** Rappresentazione del testo
+come faccio a rappresentare il test come variabili, diciamo, di bernoulli?
+posso prendere un vettore con \(n\) elementi dove \(n\) è la dimensione di un vocabolario interno
+
+il dizionario è l'insieme della parole incontrate, non il garzanti o il mirriam-webster
+
+ogni elemento \(n_i\) è \(1\) se la parola \(i-esima\) compare nel testo, e \(0\) se la parola \(i-esima\) non compare nel testo
+
+modello bag-of-words
+è un modello che fa cagare al cazzo, per varii motivi
+ - l'ordine delle parole non conta una sega
+ - tutte le parole sono condizionalmente indipendenti data la classe, perchè lo dice la rete di bayes
+
+[[/home/big/Pictures/Screenshots/grim/2023-11-27-15-20-18.png]]
+
+non c'è bisogno di fare algoritmi complicati, si fa un cazzo di conteggio e una moltiplicazione
+non c'è da fare un cazzo di inferenza, basta fare una produttora
+
+questo si chiama /naive bayes/[fn::noto colloquialmente come /idiot bayes/ per quanto è abusato ingiustamente]
+
+** Smoothie?
+può capitare una cosa terribile
+ - si prenda una parola a cazzo come \(AAAI\)[fn::una conferenza di ai], mettiamo che non compare mai nel mio training set di spam
+ - si prenda che una parola tipo \(impact\) non compaia mai nel set di ham[fn::ham è l'opposto di spam]
+
+se mi compare un messaggio con sia \(AAAI\) che \(impact\) allora la probabilità di spam è 0, ma anche quella di ham è 0, e che cazzo fo adesso?
+
+parole abbastanza rare può darsi che non le trovi in entrambi i set
+se non fate laplace smoothing i hanno casi come 0 0.
+
+vale a dire, merda
+
+laplace smoothing ci salva
+
+la formula col laplace smoothing diventa
+
+\[ \Theta _{yK} = \frac{1 + \sum_{i=1}^{n} x_j^{(i)} 1(y^{(i)}=k}{\mathbb{K} + n} \]
+dove \(1(x)\) è la /funzione caratteristica/ dell'insieme \(x\) (credo)
+
+e
+\[ x_y^{(i)} = \begin{cases} 1 & \text{se \(j\) nella classe \(i\)} \\ 0 & \text{altrimenti }\]
+
+\[ y^{(i)} \]
+
+\[ n_K = \sum_{i=i}^{n} 1{y^{(i)} = k} \]
+
+\[ \mathbb{K} = \# Clauses \]
+
+gli uni a cazzo vengono dal laplace smoothing
+
+la cosa bella di quest'algoritmo è che se invece di tenere i numeri come reali si tengono come
+#+begin_src java
+  Pair.of(numeratore, denominatore);
+#+end_src
+
+allora riaddestrare la rete dopo aver aggiunto un dataset è \(O(1)\) 
+
+ok, mo' prendiamo il modello, e dal modello ricaviamo \(\mathbb{P}(y | x)\)
+
+famo un
+\[ \log \frac{\mathbb{P}(y = 1 | x)}{\mathbb{P}(y = 0 | x)} \]
+
+se questo \(\geq 1\) ho più \(1\) che \(0\), else ho più \(0\) (credo)
+
+questo può essere una "ok, ma questo \(y\) in particolare dov'è più probabile che stia come classe?"
+
+se si trova l'insieme dei punti dove questo \(\log = 0\) allora possiamo ricavare la boh /superficie di separazione/ del /cazzo/
+
+** Spazio vettoriale
+abbiamo uno spazio vettoriale dei documenti
+in questo spazio facciamo boh
+
+[[/home/big/Pictures/Screenshots/grim/2023-11-27-15-59-37.png]]
+
+come può essere fatta sta superficie di separazione?
+
+può essere fatta a così?
+[[/home/big/Pictures/Screenshots/grim/2023-11-27-16-00-54.png]]
+
+no
+
+facendo dei calcoli si vede che la superficie di separazione s'ha d'essere un PIANO[fn::o se siete in \(n\) dimensioni un /iperpiano/]
+
+[[/home/big/Pictures/Screenshots/grim/2023-11-27-16-02-24.png]]
+
+si trova la formula dell'iperpaino come
+
+
+\[ f(x) \log \frac{\prod_{i=1}^{d} \mathbb{P}(x_j | y = 1)\mathbb{P}(y=1)}{\prod_{i=1}^{d} \mathbb{P}(x_j | y = 0)\mathbb{P}(y=0)} \]
+
+che si può scrivere come
+
+\[ \log \frac{\prod_{i=1}^{d} \Theta_{j1}^{x_j}}{\prod_{i=1}^{d} \Theta_{j0}^{x_j}} \circ \frac{n _1}{n _0} \]
+
+che
+
+\[ \sum_{j=1}^{d} \lfloor x_j\ putta(naoio) \rfloor + kite(mmuort) \]
+
+* Iperpiano e basta
+ma se invece di cercare naive bayes, se tanto naive bayes mi da un'iperpiano
+
+perchè non cerciamo un iperpiano e basta?
+
+ - è un approccio più generico di naive bayes
+ - bag of words fa cagare al cazzo
+ - se cerco un iperpiano e basta posso evitare anche tutte le assunzioni di naive bayes, quali tutte le assunzioni di indipendenza condizionata fatte da naive bayes
+
+* Apprendimento con supervisione
+SUPERVISED vuol dire che i dati hanno una verità
+
+i dati sono nella forma di coppie
+\[ Data\ D = \{(x^{(i)} , y^{(i)})\ i = 1 \dots n\} \]
+
+quindi paia \(dato - classe\), ad esempio
+ - testo recensione / numero stelle della recensione
+ - foto di animale / specie dell'animale
+
+però avere un dataset così di solito è un privilegio, vuol dire che qualcuno si è messo a etichettare tutti gli elementi del dataset
+possono anche costare sti dataset
+
+questo problema consente nel determinare una funzoine
+una funzione non necessariamente un iperpiano, ma una qualche funzione discriminanta
+
+si ha uno spazio delle ipotesi \(\mathcal{H}\ hypothesis\ space\) di funzioni
+\[ f \in \mathcal{H}, f : \mathcal{X} \to \mathcal{Y} \]
+dove
+ - \(\mathcal{X}\) :: spazio degli input
+ - \(\mathcal{Y}\) :: insieme delle classi
+
+l'algoritmo mappa prende un dataset \(\mathcal{D}\) e rende/ritorna/produce[fn::per la figa e per il duce] una funzione \(f \in \mathcal{H}\)
+

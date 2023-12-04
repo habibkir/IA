@@ -1,0 +1,151 @@
+* Definizione di sta merda
+abemus tabellina
+
+|             | think | act    |
+|-------------+-------+--------|
+| like humans | non   | non    |
+|-------------+-------+--------|
+| rationally  | non   | ESATTO |
+|-------------+-------+--------|
+
+
+algoritmi che pensano come pensano gli umani ?
+o che agiscono come agiscono gli umani ?
+
+a noi interessa poco avere qualcosa che pensa
+non siamo scienziati cognitivi, non ci interessa simulare il pensiero umano
+ci interessa risolvere dei problemi
+
+** Agire
+dovete pensare che il vostro agente non è da solo, ma sta in un ambiente
+il vostro agente potrebbe essere, ad esempio, un'auto a guida autonoma, o un robottino che fa le pulizie, questo agente ha un input e un output, ma quello che riceve lo riceve dall'ambiente in cui è immerso, riceve delle "percezioni", il che vuol dire che l'agente ha dei sensori, un qualsiasi cosa che vada dall'ambiente a un input del programma
+
+un sensore della macchina potrebbe essere il gps, la telecamera, un lidar, ...
+l'agente potrebbe anche star osservando enti o ambienti non fisici, con sensore si intende un qualsiasi cosa che porti informazioni dall'esterno
+tutto quello che percepisce la macchina arriva da sensori
+
+(se sto puttanaio filosofico è per dire che si usano degli attuatori bestemmio)
+(cristo haskell ha formalizzato sta roba meglio di questo figlio di troia)
+
+ok era per dire attuatori
+un attuatore è qualcosa che va ad agire sull'agente e/o sull'ambiente
+
+l'ocr è un agente senza stato
+alcuni agenti hanno stati
+
+della probabilità bisogna sapere
+ - cos'è una marginale
+ - boh, altro
+
+possono esisteere sistemi con più agenti e un singolo ambiente, tipo più robot a pulire lo stesso appartamento, o più tesla sulla stessa strada
+sono dei puttanai
+
+la parte di modellazione è un po' complicata
+
+questo schema non è rigido, questo schema suggerisce
+
+
+** Razionalmente
+ci interessa creare agenti che agiscono in modo razionale
+questa cosa è profonda, alla fine noi vogliamo misurare ciò che accade
+
+abbiamo una funzione che misura l'utilità di quello che vogliamo fare, agire in modo razionale qui equivale a massimizzare l'utilità di quello che si fa
+di solito l'utilità non è deterministica, se l'utilità è una variabile aleatoria non è che posso massimizzarla, la variabile aleatoria è una funzione, come cazzo la massimizzo?
+
+è una funzione che mappa eventi in sticazzi, e poi ogni tentativo ha un valore diverso
+
+però posso massimizzare, ad esempio, il valore atteso
+
+si potrebbe definire la razionalità come
+#+begin_quote
+massimizzare l'utilità attesa
+#+end_quote
+
+il problema è che per sapere il valore atteso dovrei conoscere la distribuzione
+pensa un attimo il quicksort, la sai la distribuzione del tempo di esecuzione del quicksort, cazzo è?
+
+ed ecco che si arriva alla merda, qui si lavora in modo empirico, vale a dire, alla cazzo di cane finchè non funziona
+per dimostrare che ce l'hai più grosso non si fa in modo formale, si fa alla benchmark
+
+in AI la parte empirica è molto importante
+
+*** Esempio di utilità
+per una macchina a guida autonoma potrebbe essere
+ - rispettare il codice della strada
+ - arrivare in tempo
+ - ridurre il nuemro di incidenti
+
+come il caro vecchio /maximize paperclips/ ci disse tempo fa, cazzo se massimizzare roba porta a psicpatici
+per roba extra sul puttaio che è l'/alignment/ vedere le bellissime interviste di Jeoff Hinton, che ha mollato ora google per fare... cose
+
+allineare l'obbiettivo dell'agente con quello che si vuole che faccia, con qualcosa di buono per gli umani
+vale a dire, definire sta cazzo di utilità
+
+** AI per casi specifici per evitare alignment?
+metti come caso specifico un AI che sceglie curriculum da considerare per un'azienda e quali scartare in maniera automatica
+potresti definire come utilità attesa il guadagno atteso all'azienda dalla risorsa in questione
+
+ma poi cazzo ne sai di non creare un gigantesco pirla che distrugge le vite di tutti i poveri cristi che vogliono solo dei soldi e poi prende solo quelli che conoscono almeno 3 web framework e diocane 
+
+* Tre problemi a cazzo
+#+begin_src 
+che si risolvono con lo stesso algoritmo
+#+end_src
+
+ - il gioco sam lloyd
+   - quello in cui ordini le cellette
+ - attraversamento di un grafo
+   - in generale il grafo è orientato
+   - di solito i grafi hanno un peso, forse anche aleatorio
+   - per una macchina a guida autonoma (o per google maps) il peso dell'arco potrebbe essere il tempo di percorrenza, il consumo di carburante, etc...
+   - qui si userebbe dijkstra (se i pesi non sono negativi, che in questo caso ok, non lo sono)
+ - congettura di KNUTH[fn::quel figo della madonna]
+   - hai una calcolatrice con
+     - fattoriale
+     - radice quadrata
+     - parte intera inferiore
+   - parte col 4
+   - puoi ricavare il 5?
+
+** L'algoritmo
+un modo per vedere una cosa in comune
+si fanno delle scelte, si va da una parte all'altra, vogliamo fare delle scelte che vanno da uno stato all'altro
+
+si trova un cammino su questo grafo che va dallo stato corrente a uno stato obbiettivo
+
+la soluzione è data da una sequenza di /azioni/ che va dallo stato di inizio a uno stato obbiettivo
+
+si immagina che l'ambiente, durante l'esecuzione della sequenza, resti fermo, congetture ROSEE
+vedi google maps (se non sapesse ricalcolare percorsi)
+
+* Formalese
+** Premesse
+abbiamo una modellazione con un set[fn::abbastanza indecente] di assunzioni e definizioni
+questo modello è una mucca sferica nel vuoto, si sta facendo un fottio abbastanza fottio di assunzioni.
+
+ 1. abbiamo un insieme \(S\) di stati, e un insime \(A\) di possibili azioni
+ 2. \(\forall\ stato\ s \in S\) c'è un insieme di azioni disponibili (\(\exists\ Actions(s)\))
+    - per sam lloyd è scambiare la cella vuota con un vicino
+    - per il grafo è seguire uno dei vicini
+    - in pacman è andare a destra o sinistra o figaro
+ 3. modello di transizione, dato dalla funzione
+    \[ Result(a,s) : a \in Actions(s), s \in S \]
+    la funzione \(Result\) va da \((a,s)\) al risultato di applicare l'azione \(a\) nello stato \(s\).
+    la funzione è definita
+    \[ Result(a,s) : A \times S \to S \]
+    - il fatto stesso che usi la funzione \(Result\) implica che non sto più utilizzando un modello stocastico, il fatto che la funzione esista vuol dire che applicare un'azione a uno stato ha un risultato deterministico
+    - l'"immagine" di \(Result(a,s)\), vale a dire tutti gli stati a cui posso andare, vale a dire
+      \[\bigcup_{a \in Actions(s)} \{Result(a,s)\}\] 
+      definisce gli stati in cui posso andare, che sono i vicini dello stato corrente nel cosiddetto grafo di ricerca
+ 4. stato iniziale
+ 5. ogni arco ha un costo, nel caso in cui tutti gli archi sono uguali sticazzi metti 1 a tutti gli archi, abbiamo comuqnue una funzione
+    abbiamo uno /step cost/ per ogni azione, di quanto cazzo costa fare quell'azoine, un costo azione
+    \[ c : S \times A \to \mathbb{R}_{+} \]
+ 6. abbiamo un /goal test/ che equivale a un "siamo arrivati?" "me gusta sto stato?" "è effettivametne uno stato goal?"
+    \[ Goal\ Test : S \to \{0, 1\} \]
+    (perchè avere solo un insieme di goal non era abbastanza generico, famo una funzione, cristo)
+
+è anche interessante se questa sequenza di azioni è una sequenza /ottima/
+vale a dire, se il costo totale del cammino è il minimo possibile tra tutti i costi totali di cammini che arrivano a un goal
+
+questo problema è messo subito come problema di minimizzazione del costo, vedete subito un esempio di razionalità

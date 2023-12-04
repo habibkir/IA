@@ -1,0 +1,158 @@
+#+title: Probabilitas
+#+author: Bayes and Redipils
+#+date: 20XX:00:00
+
+* Altri libri consigliati
+David Barber, roba bayesiana e probaiblosa
+pdf online legale
+
+molto sintetico, molto compatto, buon complemento al Russel Norvig
+
+
+* Boh
+** Belief, odds, &Co.
+\[ Bel(E) \triangleq \frac{1}{1+m}\ odds \]
+
+** Assiomi
+il tizio che inizia con la \(K\)
+
+** Approccio soggettivo alla probabilità
+*** Dutch book
+un libro olandese
+qualcosa con delle scommesse
+
+qualcosa che ... vinci(o era perdi) indipendentemente da come scommetti, e mi sa che c'è qualcosa che non va
+
+caso "degenere" dovuto al mancato rispetto del cazzo che me ne frega
+
+questo dutch book è un sistema di scommesse incosistente, si scopre che la cosa è dovuta al "non vale il principio di unione esclusione"
+
+*** Teorema
+un sistema di scommesse è consistente *SE E SOLO SE*, leggendo i /belief/ come probabilità, questi rispettano gli assiomi (de Kolmocazzov)
+ - se non valgono gli assiomi c'è un dutch book
+ - se valgono gli assiomi non c'è un dutch book
+
+#+begin_quote
+ora possiamo ragionare sui belief come se fossero probabilità, basta che siano consistenti con gli assiomi
+#+end_quote
+
+*** Esercizietto
+due variabili sono indipendenti quando la congiunta è il prodotto
+
+** Indipendenza condizionata
+abemus 3 variabili
+ - patologie
+ - cause
+ - sintomi
+
+gruppi di variabili che vanno da causa ad effetto[fn::la nozione di causalità è molto complicata e "insert berserk reference"]
+
+prendiamo come esempio molto allegro la malattia della mucca pazza
+
+iniziamo com
+\[ \mathbb{P}(H | MC) = 0.9 \]
+dove \(\mathbb{P}(H | MC)\) è la probabilità di \(H\) (Hamburger) dato che \(MC\) (Mad Cow)
+
+nella base di conoscenza abbiamo anche
+\[ \mathbb{P}(H) = 0.5 \]
+questa non è metà della popolazione italiana, è la metà della gente che è entrata in ospedale per qualche motivo
+
+si ricorda che
+\[ \mathbb{P}(A | B) = \frac{\mathbb{P}(B | A) \mathbb{P}(A)}{\mathbb{P}(B)} \]
+
+** Cosa ci interessa calcolare
+di solito ci interessa calcolare una cosa tipo
+\[ \mathbb{P}(Query\ |\ Evidence) \]
+dove
+ - \(Query\) :: è una variabile aleatorai
+ - \(Evidence\) :: è un insieme di osservazioni su altre variabili aleatorie
+
+si pensi alla procedure per pronto soccorso per dolore toracico
+quando arriva un tizio con dolore toracico bisogna vedere "ok, e che cazzo succede?"
+c'è una qualche procedura per capire che cosa cazzo fare
+tipo i dottori per pronto soccorso hanno dati per pazienti entrati per dolore toracico   
+
+poi devi fare decisioni tipo "conviene fargli la scintigrafia[fn::un fottio di radiografie] a questo paziente?"
+"si capirebbe bene se è infarto, ma con quanta radiazione abbiamo dato a sto cristiamo potrebbe venirgli un cancro, conviene farlo?"
+
+oooh, roba con delle decisioni, OOOOOH, AGENTIIIII
+
+*** Prior
+si parte da \(\mathbb{P}(MC) = 0.9\) come credenza iniziale
+sapendo che ha mangiato un hamburger, abbiamo \[\mathbb{P}(MC|H) = \frac{\mathbb{P}(H|MC) MC}{H} = \frac{0.9 \times 10^{-5}}{0.5} = 1.8 \times 10^{-5}\]
+
+poi abbiamo la verosimiglianza, la verosimiglianza (o likelihood) è la *probabilità dei dati sapendo l'ambiente*
+quindi in questo caso la verosimiglianza è \(\mathbb{P}(H|MC)\) 
+
+serviva \(\mathbb{P}(H)\)?
+a dire il vero no, quello è un fattore di normalizzazione, è quello che garantisce che la somma faccia 1.
+
+tanto si sa che \(\mathbb{P}(malattia)+\mathbb{P}(non\ malattia) = 1\), e boh
+
+abemus formuletta informale
+\[ Posterior \propto Likelihood \times Prior \]
+
+dove \(\propto\) vuol dire /"è proporzionale a"/
+
+*** Altri dati
+- si raccolgono altri dati, un altro sintomo della mucca pazza è \(M\), perdita di memoria, possiamo aggiungere alla base di conoscenza a cui chiedere "oh, ma mucca?"
+
+condizioniamo a due
+\[
+\mathbb{P}(MC | H, M) = \frac{\mathbb{P}(M | MC, H) \mathbb{P}(MC | H)}{\mathbb{P}(M | H)}
+\]
+
+possiamo ancora applicare bayes
+
+qui si usa il vecchio posterior come nuovo prior
+e quello per cui lo moltiplicassi è di nuovo una verosimiglianza, la verosimiglianza della variabile osservata date le due variabili aleatore precedentemente osservate
+
+il fatto che ho mangiato l'hamburger, se ho perso la memoria, è diventato irrilevante
+la memoria l'ho persa per la malattia, indipendemente dall'hamburger
+
+si ha quindi che
+\[ \mathbb{P}(M | MC, H) \text{ è abbastanza uguale a } \mathbb{P}(M | MC) \]
+
+si legge che
+\[ M \perp H | MC \]
+quindi "\(M\) /condizionatamente indipendente/ da \(H\) /dato che/ \(MC\)", detto formalese
+ - indipendenza normale :: \(\mathbb{P}(A,B) = \mathbb{P}(A), \mathbb{P}(B)\)
+ - indipendenza condizionata :: \(\mathbb{P}(A,B|C) = \mathbb{P}(A|C), \mathbb{P}(B|C)\)
+   (vale a dire, \(C\) è l'unica cosa che "teneva insieme" \(A\) e \(B\), "tolta" \(C\) non c'è più niente di \(A\) che possa influenzare \(B\) o viceversa)
+
+* It's grafo time
+#+begin_quote
+PORCO DIO!
+-- Germano Mosconi
+#+end_quote
+
+ - i *NODI* sono le *VARIABILI ALEATORIE* (\(r.v.\), random variables), tipo così
+\[ H \to MC \to M \]   
+e gli archi? Guardando questa cosa si potrebbe dire che gli archi collegano cause ad effetti, in modo più formale qui si dice che
+ - la *MANCANZA DI ARCHI* rappresenta un indipendenza (\(\pm\)condizionata)
+
+(russel norvig dice che gli archi \(X \to Y\) vogliono dire che \(X\) ha effetto su \(Y\), quindi \(Y\) sarebbe una funzione i cui input sono tutti quegli \(X\) per cui \(X \to Y\))
+
+** Generalizzazione di indipendenza
+possiamo anche avere cose come
+\[ \mathbb{X} \perp \mathbb{Y} | \mathbb{Z} \]
+con
+ - \(\mathbb{U}\) universo di variabili aleatorie
+ - \(\mathbb{X}, \mathbb{Y}, \mathbb{Z} \subset \mathbb{U}\)
+ - \(\mathbb{P}(\mathbb{X}, \mathbb{Y} | \mathbb{Z}) = \mathbb{P}(\mathbb{X}|\mathbb{Z}) \mathbb{P}(\mathbb{Y}|\mathbb{Z})\) 
+
+quando metto qualcosa a destra della barra questa è informazione che ho acquisito, e voglio misurare roba /dato/ quello che ho osservato, /considerando che/ ho osservato quello, perchè l'ho osservato, quindi usiamolo
+
+** Grafo non orientato
+\[ \mathbb{X} \perp_{U} \mathbb{Y} | \mathbb{Z} \]
+con \(\mathbb{X}, \mathbb{Y}, \mathbb{Z}\) insiemi di archi, se per passare da un nodo in \(\mathbb{X}\) a un nodo in \(\mathbb{Y}\) devo per forza passare da un nodo in \(\mathbb{Z}\)
+
+se tolgo \(\mathbb{Z}\) allora \(\mathbb{X}\) e \(\mathbb{Y}\) diventano componenti separate
+
+codesta est la semanticazza
+
+abemus boh e quindi
+\[ \mathbb{P}(\mathbb{U}) = \frac{1}{z} \prod_{c \in cliques} \Phi(c) \]
+dove \(z\) è un /normalizzatore/ (per fare tornare a 1 ciò che deve esser 1), e \(\Phi(\circ)\) è una /funzione potenziale/[fn::io non ho idea di cosa cazzo io abbia scritto]
+
+la semantica è che il grafo non sta rappresentando una singola distribuzione di probabilità, sta rappresentando tutte le distibuzioni probabilità che possono essere fattorizzate
